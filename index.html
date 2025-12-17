@@ -1,0 +1,1975 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>到達駅マップ（OR条件 / 徒歩円）</title>
+
+	<!-- Leaflet (CDN) -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+	<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+	<style>
+		:root {
+			--bg: #0b0f17;
+			--panel: #121a27;
+			--panel2: #0f1622;
+			--text: #e7eefc;
+			--muted: #9fb0cf;
+			--line: rgba(255, 255, 255, 0.10);
+			--accent: #7aa2ff;
+			--shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+			--radius: 14px;
+			--font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+		}
+
+		* {
+			box-sizing: border-box
+		}
+
+		body {
+			margin: 0;
+			font-family: var(--font);
+			color: var(--text);
+			background: radial-gradient(1200px 900px at 30% 10%, rgba(122, 162, 255, 0.12), transparent 60%),
+				radial-gradient(1100px 800px at 90% 20%, rgba(61, 220, 151, 0.10), transparent 60%),
+				var(--bg);
+		}
+
+		header {
+			padding: 14px 18px;
+			border-bottom: 1px solid var(--line);
+			display: flex;
+			gap: 12px;
+			align-items: baseline;
+			flex-wrap: wrap;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 18px;
+			letter-spacing: .2px
+		}
+
+		header .meta {
+			font-size: 12px;
+			color: var(--muted)
+		}
+
+		.app {
+			display: grid;
+			grid-template-columns: 380px 1fr;
+			gap: 12px;
+			height: calc(100vh - 56px);
+			padding: 12px;
+		}
+
+		.panel {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 40%), var(--panel);
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			min-height: 0;
+		}
+
+		.panel-head {
+			padding: 12px;
+			border-bottom: 1px solid var(--line);
+			background: var(--panel2)
+		}
+
+		.panel-head h2 {
+			margin: 0;
+			font-size: 13px;
+			color: var(--muted);
+			font-weight: 600
+		}
+
+		.panel-body {
+			padding: 12px;
+			overflow: auto;
+			min-height: 0
+		}
+
+		.controls {
+			display: grid;
+			gap: 12px
+		}
+
+		.group {
+			padding: 10px;
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			background: rgba(0, 0, 0, 0.15)
+		}
+
+		.group-title {
+			font-size: 12px;
+			color: var(--muted);
+			margin-bottom: 8px;
+			display: flex;
+			justify-content: space-between;
+			gap: 8px;
+			align-items: center
+		}
+
+		.row {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			align-items: center
+		}
+
+		label.chk {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 6px 8px;
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.03);
+			cursor: pointer;
+			user-select: none;
+			font-size: 12px;
+			color: var(--text)
+		}
+
+		label.chk input {
+			accent-color: var(--accent)
+		}
+
+		.field {
+			display: grid;
+			gap: 6px
+		}
+
+		.field label {
+			font-size: 12px;
+			color: var(--muted)
+		}
+
+		input[type="text"],
+		input[type="number"] {
+			width: 100%;
+			padding: 9px 10px;
+			border-radius: 10px;
+			border: 1px solid var(--line);
+			background: rgba(0, 0, 0, 0.25);
+			color: var(--text);
+			outline: none
+		}
+
+		.hint {
+			font-size: 11px;
+			color: var(--muted);
+			line-height: 1.4
+		}
+
+		.btns {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap
+		}
+
+		button {
+			border: 1px solid var(--line);
+			background: rgba(122, 162, 255, 0.12);
+			color: var(--text);
+			padding: 9px 10px;
+			border-radius: 12px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 12px
+		}
+
+		button.secondary {
+			background: rgba(255, 255, 255, 0.06)
+		}
+
+		button:active {
+			transform: translateY(1px)
+		}
+
+		.stats {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 8px;
+			margin-top: 8px
+		}
+
+		.stat {
+			padding: 10px;
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			background: rgba(0, 0, 0, 0.15)
+		}
+
+		.stat .k {
+			font-size: 11px;
+			color: var(--muted)
+		}
+
+		.stat .v {
+			font-size: 18px;
+			font-weight: 800;
+			margin-top: 4px
+		}
+
+		.main {
+			display: grid;
+			grid-template-rows: 1fr 280px;
+			gap: 12px;
+			min-height: 0
+		}
+
+		#map {
+			border-radius: var(--radius);
+			border: 1px solid var(--line);
+			box-shadow: var(--shadow);
+			overflow: hidden;
+			min-height: 0
+		}
+
+		.table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 12px
+		}
+
+		.table th,
+		.table td {
+			padding: 10px;
+			border-bottom: 1px solid var(--line);
+			vertical-align: top
+		}
+
+		.table th {
+			text-align: left;
+			font-size: 11px;
+			color: var(--muted);
+			font-weight: 700;
+			background: rgba(0, 0, 0, 0.10);
+			position: sticky;
+			top: 0;
+			z-index: 1
+		}
+
+		.table tr:hover td {
+			background: rgba(122, 162, 255, 0.08);
+			cursor: pointer
+		}
+
+		.chips {
+			display: flex;
+			gap: 6px;
+			flex-wrap: wrap
+		}
+
+		.chip {
+			display: inline-flex;
+			gap: 6px;
+			align-items: center;
+			padding: 3px 8px;
+			border-radius: 999px;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.04);
+			font-size: 11px;
+			white-space: nowrap
+		}
+
+		.dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 999px;
+			display: inline-block
+		}
+
+		.small {
+			font-size: 11px;
+			color: var(--muted)
+		}
+
+		.nowrap {
+			white-space: nowrap
+		}
+
+		@media (max-width:980px) {
+			.app {
+				grid-template-columns: 1fr;
+				height: auto
+			}
+
+			.main {
+				grid-template-rows: 420px 420px
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>到達駅マップ（会社最寄り OR / 徒歩円）</h1>
+		<div class="meta" id="meta"></div>
+	</header>
+
+	<div class="app">
+		<section class="panel">
+			<div class="panel-head">
+				<h2>フィルタ</h2>
+			</div>
+			<div class="panel-body">
+				<div class="controls">
+
+					<div class="group">
+						<div class="group-title"><span>対象ターゲット（OR）</span><span class="small">どれか1つでもOK</span></div>
+						<div class="row" id="targetChecks"></div>
+					</div>
+
+					<div class="group">
+						<div class="group-title"><span>時間帯（複数可）</span><span class="small">timeBand</span></div>
+						<div class="row" id="bandChecks"></div>
+						<div class="field" style="margin-top:10px;">
+							<label for="maxMinutes">最大所要時間（分）</label>
+							<input id="maxMinutes" type="number" min="0" step="1" placeholder="空なら制限なし" />
+						</div>
+					</div>
+
+					<div class="group">
+						<div class="group-title"><span>徒歩円</span><span class="small">円で十分</span></div>
+						<div class="field">
+							<label for="walkMinutes">徒歩X分（全駅共通）</label>
+							<input id="walkMinutes" type="number" min="0" step="1" value="10" />
+							<div class="hint">距離換算：<span class="nowrap">1分 = 80m（徒歩4.8km/h想定）</span></div>
+						</div>
+						<div class="row" style="margin-top:8px;">
+							<label class="chk"><input id="toggleCircles" type="checkbox" checked /> 徒歩円を表示</label>
+						</div>
+					</div>
+
+					<div class="group">
+						<div class="group-title"><span>検索</span><span class="small">駅名/路線/住所</span></div>
+						<input id="q" type="text" placeholder="例：日比谷 / 千葉 / 中目黒" />
+					</div>
+
+					<div class="btns">
+						<button id="btnFit">地図を全体表示</button>
+						<button class="secondary" id="btnReset">フィルタ初期化</button>
+						<button class="secondary" id="btnCopy">駅名をコピー</button>
+						<button class="secondary" id="btnDownload">JSONをダウンロード</button>
+					</div>
+
+					<div class="stats">
+						<div class="stat">
+							<div class="k">表示駅数</div>
+							<div class="v" id="statCount">-</div>
+						</div>
+						<div class="stat">
+							<div class="k">選択ターゲット数</div>
+							<div class="v" id="statTargets">-</div>
+						</div>
+					</div>
+
+					<div class="hint">※Leaflet + OpenStreetMap。地図タイル取得のためネット接続が必要です。</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="main">
+			<div id="map"></div>
+
+			<section class="panel">
+				<div class="panel-head">
+					<h2>駅一覧（クリックで地図へ）</h2>
+				</div>
+				<div class="panel-body" style="padding:0;">
+					<table class="table">
+						<thead>
+							<tr>
+								<th style="width:28%;">駅</th>
+								<th style="width:18%;">エリア</th>
+								<th style="width:12%;">最短(分)</th>
+								<th style="width:22%;">到達元</th>
+								<th>路線</th>
+							</tr>
+						</thead>
+						<tbody id="tbody"></tbody>
+					</table>
+				</div>
+			</section>
+		</section>
+	</div>
+
+	<script>
+		/** ✅ ここにあなたのJSONを「そのまま」貼る（ルートがオブジェクトのJSON） */
+		const RAW_DATA = {
+				"generatedAt": "2025-12-17T08:22:38.036Z",
+				"source": {
+					"transitLimit": 0,
+					"firstTrain": true,
+					"expressTrain": false,
+					"targets": [
+						{
+							"name": "茅場町",
+							"node": "00001303",
+							"baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00001303"
+						},
+						{
+							"name": "八丁堀",
+							"node": "00007548",
+							"baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00007548"
+						},
+						{
+							"name": "水天宮前",
+							"node": "00004569",
+							"baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00004569"
+						}
+					],
+					"ranges": [
+						{
+							"lower": 0,
+							"higher": 10
+						},
+						{
+							"lower": 10,
+							"higher": 20
+						},
+						{
+							"lower": 20,
+							"higher": 30
+						},
+						{
+							"lower": 30,
+							"higher": 40
+						}
+					]
+				},
+				"stationsById": {
+					"00007548": {
+						"stationId": "00007548",
+						"stationName": "八丁堀（東京都）",
+						"roughAddress": "東京都中央区八丁堀",
+						"pref": "東京都",
+						"cityWard": "中央区",
+						"coord": {
+							"lat": 35.675463,
+							"lon": 139.777349
+						},
+						"lines": [
+							"東京メトロ日比谷線"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "0-10",
+								"timeMinutes": 4,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "10-20",
+								"timeMinutes": 12,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							}
+						]
+					},
+					"00006866": {
+						"stationId": "00006866",
+						"stationName": "東陽町",
+						"roughAddress": "東京都江東区東陽",
+						"pref": "東京都",
+						"cityWard": "江東区",
+						"coord": {
+							"lat": 35.669631,
+							"lon": 139.817706
+						},
+						"lines": [
+							"東京メトロ東西線"
+						],
+						"lineMeta": {
+							"東京メトロ東西線": {
+								"id": "00000771",
+								"color": "#009BBF"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "0-10",
+								"timeMinutes": 9,
+								"transitCount": 0,
+								"line": "東京メトロ東西線"
+							}
+						]
+					},
+					"00000616": {
+						"stationId": "00000616",
+						"stationName": "浦安（千葉県）",
+						"roughAddress": "千葉県浦安市北栄",
+						"pref": "千葉県",
+						"cityWard": "浦安市",
+						"coord": {
+							"lat": 35.665911,
+							"lon": 139.893006
+						},
+						"lines": [
+							"東京メトロ東西線"
+						],
+						"lineMeta": {
+							"東京メトロ東西線": {
+								"id": "00000771",
+								"color": "#009BBF"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "10-20",
+								"timeMinutes": 19,
+								"transitCount": 0,
+								"line": "東京メトロ東西線"
+							}
+						]
+					},
+					"00001116": {
+						"stationId": "00001116",
+						"stationName": "霞ヶ関（東京都）",
+						"roughAddress": "東京都千代田区霞が関",
+						"pref": "東京都",
+						"cityWard": "千代田区",
+						"coord": {
+							"lat": 35.673932,
+							"lon": 139.75105
+						},
+						"lines": [
+							"東京メトロ日比谷線"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "10-20",
+								"timeMinutes": 13,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "10-20",
+								"timeMinutes": 11,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 21,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							}
+						]
+					},
+					"00009268": {
+						"stationId": "00009268",
+						"stationName": "南千住〔日比谷線〕",
+						"roughAddress": "東京都荒川区南千住",
+						"pref": "東京都",
+						"cityWard": "荒川区",
+						"coord": {
+							"lat": 35.732422,
+							"lon": 139.79881
+						},
+						"lines": [
+							"東京メトロ日比谷線"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "10-20",
+								"timeMinutes": 17,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "10-20",
+								"timeMinutes": 19,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 21,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							}
+						]
+					},
+					"00008355": {
+						"stationId": "00008355",
+						"stationName": "北千住",
+						"roughAddress": "東京都足立区千住旭町",
+						"pref": "東京都",
+						"cityWard": "足立区",
+						"coord": {
+							"lat": 35.749639,
+							"lon": 139.805177
+						},
+						"lines": [
+							"東京メトロ日比谷線",
+							"東武伊勢崎線〔スカイツリーライン〕"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							},
+							"東武伊勢崎線〔スカイツリーライン〕": {
+								"id": "00000798",
+								"color": "#0F6CC3"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "10-20",
+								"timeMinutes": 20,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "20-30",
+								"timeMinutes": 22,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 23,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							}
+						]
+					},
+					"00006137": {
+						"stationId": "00006137",
+						"stationName": "中野（東京都）",
+						"roughAddress": "東京都中野区中野",
+						"pref": "東京都",
+						"cityWard": "中野区",
+						"coord": {
+							"lat": 35.705816,
+							"lon": 139.66594
+						},
+						"lines": [
+							"東京メトロ東西線"
+						],
+						"lineMeta": {
+							"東京メトロ東西線": {
+								"id": "00000771",
+								"color": "#009BBF"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "20-30",
+								"timeMinutes": 25,
+								"transitCount": 0,
+								"line": "東京メトロ東西線"
+							}
+						]
+					},
+					"00008561": {
+						"stationId": "00008561",
+						"stationName": "妙典",
+						"roughAddress": "千葉県市川市富浜",
+						"pref": "千葉県",
+						"cityWard": "市川市",
+						"coord": {
+							"lat": 35.690894,
+							"lon": 139.924193
+						},
+						"lines": [
+							"東京メトロ東西線"
+						],
+						"lineMeta": {
+							"東京メトロ東西線": {
+								"id": "00000771",
+								"color": "#009BBF"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "20-30",
+								"timeMinutes": 26,
+								"transitCount": 0,
+								"line": "東京メトロ東西線"
+							}
+						]
+					},
+					"00004837": {
+						"stationId": "00004837",
+						"stationName": "西船橋",
+						"roughAddress": "千葉県船橋市西船",
+						"pref": "千葉県",
+						"cityWard": "船橋市",
+						"coord": {
+							"lat": 35.707459,
+							"lon": 139.959232
+						},
+						"lines": [
+							"東京メトロ東西線",
+							"ＪＲ武蔵野線（西船橋-市川塩浜）"
+						],
+						"lineMeta": {
+							"東京メトロ東西線": {
+								"id": "00000771",
+								"color": "#009BBF"
+							},
+							"ＪＲ武蔵野線（西船橋-市川塩浜）": {
+								"id": "00000201",
+								"color": "#F15A22"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "20-30",
+								"timeMinutes": 27,
+								"transitCount": 0,
+								"line": "東京メトロ東西線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "30-40",
+								"timeMinutes": 33,
+								"transitCount": 0,
+								"line": "ＪＲ武蔵野線（西船橋-市川塩浜）"
+							}
+						]
+					},
+					"00002403": {
+						"stationId": "00002403",
+						"stationName": "広尾",
+						"roughAddress": "東京都港区南麻布",
+						"pref": "東京都",
+						"cityWard": "港区",
+						"coord": {
+							"lat": 35.651921,
+							"lon": 139.722208
+						},
+						"lines": [
+							"東京メトロ日比谷線"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "20-30",
+								"timeMinutes": 22,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "10-20",
+								"timeMinutes": 20,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 30,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							}
+						]
+					},
+					"00006133": {
+						"stationId": "00006133",
+						"stationName": "中目黒",
+						"roughAddress": "東京都目黒区上目黒",
+						"pref": "東京都",
+						"cityWard": "目黒区",
+						"coord": {
+							"lat": 35.644211,
+							"lon": 139.698927
+						},
+						"lines": [
+							"東京メトロ日比谷線"
+						],
+						"lineMeta": {
+							"東京メトロ日比谷線": {
+								"id": "00000773",
+								"color": "#B5B5AC"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "20-30",
+								"timeMinutes": 27,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "20-30",
+								"timeMinutes": 25,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 35,
+								"transitCount": 0,
+								"line": "東京メトロ日比谷線"
+							}
+						]
+					},
+					"00003040": {
+						"stationId": "00003040",
+						"stationName": "三鷹",
+						"roughAddress": "東京都三鷹市下連雀",
+						"pref": "東京都",
+						"cityWard": "三鷹市",
+						"coord": {
+							"lat": 35.702705,
+							"lon": 139.560919
+						},
+						"lines": [
+							"ＪＲ中央本線（東京-塩尻）"
+						],
+						"lineMeta": {
+							"ＪＲ中央本線（東京-塩尻）": {
+								"id": "00000176",
+								"color": "#F15A22"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "30-40",
+								"timeMinutes": 39,
+								"transitCount": 0,
+								"line": "ＪＲ中央本線（東京-塩尻）"
+							}
+						]
+					},
+					"00005968": {
+						"stationId": "00005968",
+						"stationName": "竹ノ塚",
+						"roughAddress": "東京都足立区竹の塚",
+						"pref": "東京都",
+						"cityWard": "足立区",
+						"coord": {
+							"lat": 35.794433,
+							"lon": 139.790816
+						},
+						"lines": [
+							"東武伊勢崎線〔スカイツリーライン〕"
+						],
+						"lineMeta": {
+							"東武伊勢崎線〔スカイツリーライン〕": {
+								"id": "00000798",
+								"color": "#0F6CC3"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "30-40",
+								"timeMinutes": 31,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "30-40",
+								"timeMinutes": 33,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 35,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							}
+						]
+					},
+					"00005403": {
+						"stationId": "00005403",
+						"stationName": "草加",
+						"roughAddress": "埼玉県草加市氷川町",
+						"pref": "埼玉県",
+						"cityWard": "草加市",
+						"coord": {
+							"lat": 35.828485,
+							"lon": 139.80348
+						},
+						"lines": [
+							"東武伊勢崎線〔スカイツリーライン〕"
+						],
+						"lineMeta": {
+							"東武伊勢崎線〔スカイツリーライン〕": {
+								"id": "00000798",
+								"color": "#0F6CC3"
+							}
+						},
+						"reachable": [
+							{
+								"target": "茅場町",
+								"targetNode": "00001303",
+								"timeBand": "30-40",
+								"timeMinutes": 37,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							},
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "30-40",
+								"timeMinutes": 39,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							},
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 34,
+								"transitCount": 0,
+								"line": "東武伊勢崎線〔スカイツリーライン〕"
+							}
+						]
+					},
+					"00006668": {
+						"stationId": "00006668",
+						"stationName": "東京",
+						"roughAddress": "東京都千代田区丸の内",
+						"pref": "東京都",
+						"cityWard": "千代田区",
+						"coord": {
+							"lat": 35.677656,
+							"lon": 139.764838
+						},
+						"lines": [
+							"ＪＲ京葉線"
+						],
+						"lineMeta": {
+							"ＪＲ京葉線": {
+								"id": "00000132",
+								"color": "#C9242F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "0-10",
+								"timeMinutes": 7,
+								"transitCount": 0,
+								"line": "ＪＲ京葉線"
+							}
+						]
+					},
+					"00004252": {
+						"stationId": "00004252",
+						"stationName": "新習志野",
+						"roughAddress": "千葉県習志野市茜浜",
+						"pref": "千葉県",
+						"cityWard": "習志野市",
+						"coord": {
+							"lat": 35.667171,
+							"lon": 140.013106
+						},
+						"lines": [
+							"ＪＲ京葉線"
+						],
+						"lineMeta": {
+							"ＪＲ京葉線": {
+								"id": "00000132",
+								"color": "#C9242F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "30-40",
+								"timeMinutes": 37,
+								"transitCount": 0,
+								"line": "ＪＲ京葉線"
+							}
+						]
+					},
+					"00001168": {
+						"stationId": "00001168",
+						"stationName": "海浜幕張",
+						"roughAddress": "千葉県千葉市美浜区ひび野",
+						"pref": "千葉県",
+						"cityWard": "千葉市",
+						"coord": {
+							"lat": 35.648556,
+							"lon": 140.041662
+						},
+						"lines": [
+							"ＪＲ京葉線"
+						],
+						"lineMeta": {
+							"ＪＲ京葉線": {
+								"id": "00000132",
+								"color": "#C9242F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "八丁堀",
+								"targetNode": "00007548",
+								"timeBand": "30-40",
+								"timeMinutes": 39,
+								"transitCount": 0,
+								"line": "ＪＲ京葉線"
+							}
+						]
+					},
+					"00009219": {
+						"stationId": "00009219",
+						"stationName": "清澄白河",
+						"roughAddress": "東京都江東区白河",
+						"pref": "東京都",
+						"cityWard": "江東区",
+						"coord": {
+							"lat": 35.682132,
+							"lon": 139.799977
+						},
+						"lines": [
+							"東京メトロ半蔵門線"
+						],
+						"lineMeta": {
+							"東京メトロ半蔵門線": {
+								"id": "00000774",
+								"color": "#8F76D6"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "0-10",
+								"timeMinutes": 6,
+								"transitCount": 0,
+								"line": "東京メトロ半蔵門線"
+							}
+						]
+					},
+					"00003508": {
+						"stationId": "00003508",
+						"stationName": "住吉（東京都）",
+						"roughAddress": "東京都江東区住吉",
+						"pref": "東京都",
+						"cityWard": "江東区",
+						"coord": {
+							"lat": 35.689001,
+							"lon": 139.815729
+						},
+						"lines": [
+							"東京メトロ半蔵門線"
+						],
+						"lineMeta": {
+							"東京メトロ半蔵門線": {
+								"id": "00000774",
+								"color": "#8F76D6"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "0-10",
+								"timeMinutes": 9,
+								"transitCount": 0,
+								"line": "東京メトロ半蔵門線"
+							}
+						]
+					},
+					"00000813": {
+						"stationId": "00000813",
+						"stationName": "押上[スカイツリー前]",
+						"roughAddress": "東京都墨田区押上",
+						"pref": "東京都",
+						"cityWard": "墨田区",
+						"coord": {
+							"lat": 35.710286,
+							"lon": 139.813287
+						},
+						"lines": [
+							"東京メトロ半蔵門線"
+						],
+						"lineMeta": {
+							"東京メトロ半蔵門線": {
+								"id": "00000774",
+								"color": "#8F76D6"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "10-20",
+								"timeMinutes": 13,
+								"transitCount": 0,
+								"line": "東京メトロ半蔵門線"
+							}
+						]
+					},
+					"00007594": {
+						"stationId": "00007594",
+						"stationName": "半蔵門",
+						"roughAddress": "東京都千代田区麹町",
+						"pref": "東京都",
+						"cityWard": "千代田区",
+						"coord": {
+							"lat": 35.685676,
+							"lon": 139.741651
+						},
+						"lines": [
+							"東京メトロ半蔵門線"
+						],
+						"lineMeta": {
+							"東京メトロ半蔵門線": {
+								"id": "00000774",
+								"color": "#8F76D6"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "10-20",
+								"timeMinutes": 14,
+								"transitCount": 0,
+								"line": "東京メトロ半蔵門線"
+							}
+						]
+					},
+					"00005271": {
+						"stationId": "00005271",
+						"stationName": "浅草橋",
+						"roughAddress": "東京都台東区浅草橋",
+						"pref": "東京都",
+						"cityWard": "台東区",
+						"coord": {
+							"lat": 35.697656,
+							"lon": 139.78643
+						},
+						"lines": [
+							"都営浅草線"
+						],
+						"lineMeta": {
+							"都営浅草線": {
+								"id": "00000795",
+								"color": "#E83E2F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "10-20",
+								"timeMinutes": 13,
+								"transitCount": 0,
+								"line": "都営浅草線"
+							}
+						]
+					},
+					"00005252": {
+						"stationId": "00005252",
+						"stationName": "泉岳寺",
+						"roughAddress": "東京都港区高輪",
+						"pref": "東京都",
+						"cityWard": "港区",
+						"coord": {
+							"lat": 35.638664,
+							"lon": 139.739946
+						},
+						"lines": [
+							"都営浅草線"
+						],
+						"lineMeta": {
+							"都営浅草線": {
+								"id": "00000795",
+								"color": "#E83E2F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 23,
+								"transitCount": 0,
+								"line": "都営浅草線"
+							}
+						]
+					},
+					"00004980": {
+						"stationId": "00004980",
+						"stationName": "青砥",
+						"roughAddress": "東京都葛飾区青戸",
+						"pref": "東京都",
+						"cityWard": "葛飾区",
+						"coord": {
+							"lat": 35.745571,
+							"lon": 139.856081
+						},
+						"lines": [
+							"京成押上線"
+						],
+						"lineMeta": {
+							"京成押上線": {
+								"id": "00000286",
+								"color": "#005AAA"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 26,
+								"transitCount": 0,
+								"line": "京成押上線"
+							}
+						]
+					},
+					"00007825": {
+						"stationId": "00007825",
+						"stationName": "品川",
+						"roughAddress": "東京都港区高輪",
+						"pref": "東京都",
+						"cityWard": "港区",
+						"coord": {
+							"lat": 35.628075,
+							"lon": 139.737987
+						},
+						"lines": [
+							"京急本線"
+						],
+						"lineMeta": {
+							"京急本線": {
+								"id": "00000298",
+								"color": "#E5171F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 25,
+								"transitCount": 0,
+								"line": "京急本線"
+							}
+						]
+					},
+					"00001736": {
+						"stationId": "00001736",
+						"stationName": "京成高砂",
+						"roughAddress": "東京都葛飾区高砂",
+						"pref": "東京都",
+						"cityWard": "葛飾区",
+						"coord": {
+							"lat": 35.75096,
+							"lon": 139.867356
+						},
+						"lines": [
+							"京成本線"
+						],
+						"lineMeta": {
+							"京成本線": {
+								"id": "00000291",
+								"color": "#005AAA"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "20-30",
+								"timeMinutes": 29,
+								"transitCount": 0,
+								"line": "京成本線"
+							}
+						]
+					},
+					"00004908": {
+						"stationId": "00004908",
+						"stationName": "西馬込",
+						"roughAddress": "東京都大田区南馬込",
+						"pref": "東京都",
+						"cityWard": "大田区",
+						"coord": {
+							"lat": 35.586971,
+							"lon": 139.706024
+						},
+						"lines": [
+							"都営浅草線"
+						],
+						"lineMeta": {
+							"都営浅草線": {
+								"id": "00000795",
+								"color": "#E83E2F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 35,
+								"transitCount": 0,
+								"line": "都営浅草線"
+							}
+						]
+					},
+					"00001715": {
+						"stationId": "00001715",
+						"stationName": "京急蒲田",
+						"roughAddress": "東京都大田区蒲田",
+						"pref": "東京都",
+						"cityWard": "大田区",
+						"coord": {
+							"lat": 35.560695,
+							"lon": 139.723737
+						},
+						"lines": [
+							"京急本線"
+						],
+						"lineMeta": {
+							"京急本線": {
+								"id": "00000298",
+								"color": "#E5171F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 32,
+								"transitCount": 0,
+								"line": "京急本線"
+							}
+						]
+					},
+					"00008112": {
+						"stationId": "00008112",
+						"stationName": "平和島",
+						"roughAddress": "東京都大田区大森北",
+						"pref": "東京都",
+						"cityWard": "大田区",
+						"coord": {
+							"lat": 35.578735,
+							"lon": 139.734975
+						},
+						"lines": [
+							"京急本線"
+						],
+						"lineMeta": {
+							"京急本線": {
+								"id": "00000298",
+								"color": "#E5171F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 32,
+								"transitCount": 0,
+								"line": "京急本線"
+							}
+						]
+					},
+					"00001718": {
+						"stationId": "00001718",
+						"stationName": "京急川崎",
+						"roughAddress": "神奈川県川崎市川崎区駅前本町",
+						"pref": "神奈川県",
+						"cityWard": "川崎市",
+						"coord": {
+							"lat": 35.5328,
+							"lon": 139.700787
+						},
+						"lines": [
+							"京急本線"
+						],
+						"lineMeta": {
+							"京急本線": {
+								"id": "00000298",
+								"color": "#E5171F"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 36,
+								"transitCount": 0,
+								"line": "京急本線"
+							}
+						]
+					},
+					"00007197": {
+						"stationId": "00007197",
+						"stationName": "二子玉川",
+						"roughAddress": "東京都世田谷区玉川",
+						"pref": "東京都",
+						"cityWard": "世田谷区",
+						"coord": {
+							"lat": 35.612205,
+							"lon": 139.627239
+						},
+						"lines": [
+							"東急田園都市線"
+						],
+						"lineMeta": {
+							"東急田園都市線": {
+								"id": "00000789",
+								"color": "#018D54"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 34,
+								"transitCount": 0,
+								"line": "東急田園都市線"
+							}
+						]
+					},
+					"00008775": {
+						"stationId": "00008775",
+						"stationName": "矢切",
+						"roughAddress": "千葉県松戸市下矢切",
+						"pref": "千葉県",
+						"cityWard": "松戸市",
+						"coord": {
+							"lat": 35.757293,
+							"lon": 139.899693
+						},
+						"lines": [
+							"京成成田スカイアクセス線・北総線"
+						],
+						"lineMeta": {
+							"京成成田スカイアクセス線・北総線": {
+								"id": "00000852",
+								"color": "#00BDF2"
+							}
+						},
+						"reachable": [
+							{
+								"target": "水天宮前",
+								"targetNode": "00004569",
+								"timeBand": "30-40",
+								"timeMinutes": 37,
+								"transitCount": 0,
+								"line": "京成成田スカイアクセス線・北総線"
+							}
+						]
+					}
+				},
+				"targetsIndex": {
+					"00001303": {
+						"target": "茅場町",
+						"targetNode": "00001303",
+						"timeBands": {
+							"0-10": [
+								"00007548",
+								"00006866"
+							],
+							"10-20": [
+								"00000616",
+								"00001116",
+								"00009268",
+								"00008355"
+							],
+							"20-30": [
+								"00006137",
+								"00008561",
+								"00004837",
+								"00008355",
+								"00002403",
+								"00006133"
+							],
+							"30-40": [
+								"00003040",
+								"00005968",
+								"00005403"
+							]
+						}
+					},
+					"00007548": {
+						"target": "八丁堀",
+						"targetNode": "00007548",
+						"timeBands": {
+							"0-10": [
+								"00006668"
+							],
+							"10-20": [
+								"00001116",
+								"00009268",
+								"00002403"
+							],
+							"20-30": [
+								"00002403",
+								"00008355",
+								"00006133"
+							],
+							"30-40": [
+								"00005968",
+								"00005403",
+								"00004252",
+								"00001168",
+								"00004837"
+							]
+						}
+					},
+					"00004569": {
+						"target": "水天宮前",
+						"targetNode": "00004569",
+						"timeBands": {
+							"0-10": [
+								"00009219",
+								"00003508"
+							],
+							"10-20": [
+								"00007548",
+								"00000813",
+								"00007594",
+								"00005271"
+							],
+							"20-30": [
+								"00001116",
+								"00009268",
+								"00002403",
+								"00005252",
+								"00004980",
+								"00008355",
+								"00007825",
+								"00001736"
+							],
+							"30-40": [
+								"00002403",
+								"00006133",
+								"00004908",
+								"00005403",
+								"00005968",
+								"00001715",
+								"00008112",
+								"00001718",
+								"00007197",
+								"00008775"
+							]
+						}
+					}
+				}
+			}; // ← ここを置き換え！
+
+		/** 以降はツール本体 */
+		const WALK_METERS_PER_MIN = 80;
+
+		const DATA = RAW_DATA; // 使いやすい名前に
+		const targets = (DATA?.source?.targets || []).map(t => ({ name: t.name, node: t.node }));
+		const bands = (DATA?.source?.ranges || []).map(r => `${r.lower}-${r.higher}`);
+
+		const stations = Object.values(DATA?.stationsById || {}).map(s => ({
+			stationId: s.stationId,
+			stationName: s.stationName,
+			roughAddress: s.roughAddress,
+			pref: s.pref,
+			cityWard: s.cityWard,
+			coord: s.coord,
+			lines: s.lines || [],
+			lineMeta: s.lineMeta || {},
+			reachable: s.reachable || [],
+		}));
+
+		const elMeta = document.getElementById('meta');
+		const elTargetChecks = document.getElementById('targetChecks');
+		const elBandChecks = document.getElementById('bandChecks');
+		const elMaxMinutes = document.getElementById('maxMinutes');
+		const elWalkMinutes = document.getElementById('walkMinutes');
+		const elToggleCircles = document.getElementById('toggleCircles');
+		const elQ = document.getElementById('q');
+		const elStatCount = document.getElementById('statCount');
+		const elStatTargets = document.getElementById('statTargets');
+		const elTbody = document.getElementById('tbody');
+
+		const btnFit = document.getElementById('btnFit');
+		const btnReset = document.getElementById('btnReset');
+		const btnCopy = document.getElementById('btnCopy');
+		const btnDownload = document.getElementById('btnDownload');
+
+		const state = {
+			selectedTargets: new Set(targets.map(t => t.node)),
+			selectedBands: new Set(bands),
+			maxMinutes: null,
+			walkMinutes: 10,
+			showCircles: true,
+			q: ''
+		};
+
+		let map, markerLayer, circleLayer;
+		let lastRendered = [];
+		let stationIdToMarker = new Map();
+
+		function escapeHtml(s) {
+			return String(s ?? '')
+				.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+				.replaceAll('"', '&quot;').replaceAll("'", "&#039;");
+		}
+		function toast(msg) {
+			const div = document.createElement('div');
+			div.textContent = msg;
+			div.style.position = 'fixed'; div.style.bottom = '18px'; div.style.left = '50%'; div.style.transform = 'translateX(-50%)';
+			div.style.padding = '10px 12px'; div.style.borderRadius = '999px'; div.style.background = 'rgba(0,0,0,0.75)';
+			div.style.color = 'white'; div.style.border = '1px solid rgba(255,255,255,0.2)'; div.style.zIndex = 9999;
+			div.style.fontSize = '12px'; div.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+			document.body.appendChild(div); setTimeout(() => div.remove(), 1500);
+		}
+
+		function initUI() {
+			elMeta.textContent = `generatedAt: ${DATA.generatedAt} / transitLimit=${DATA.source.transitLimit}, firstTrain=${DATA.source.firstTrain}, expressTrain=${DATA.source.expressTrain}`;
+
+			elTargetChecks.innerHTML = '';
+			for (const t of targets) {
+				const id = `t_${t.node}`;
+				const label = document.createElement('label');
+				label.className = 'chk';
+				label.innerHTML = `<input type="checkbox" id="${id}" checked> ${escapeHtml(t.name)}`;
+				elTargetChecks.appendChild(label);
+				label.querySelector('input').addEventListener('change', (e) => {
+					if (e.target.checked) state.selectedTargets.add(t.node); else state.selectedTargets.delete(t.node);
+					renderAll();
+				});
+			}
+
+			elBandChecks.innerHTML = '';
+			for (const b of bands) {
+				const id = `b_${b}`;
+				const label = document.createElement('label');
+				label.className = 'chk';
+				label.innerHTML = `<input type="checkbox" id="${id}" checked> ${escapeHtml(b)}分`;
+				elBandChecks.appendChild(label);
+				label.querySelector('input').addEventListener('change', (e) => {
+					if (e.target.checked) state.selectedBands.add(b); else state.selectedBands.delete(b);
+					renderAll();
+				});
+			}
+
+			elMaxMinutes.addEventListener('input', () => {
+				const v = elMaxMinutes.value.trim();
+				state.maxMinutes = v === '' ? null : Math.max(0, Number(v));
+				renderAll();
+			});
+			elWalkMinutes.addEventListener('input', () => {
+				const v = elWalkMinutes.value.trim();
+				state.walkMinutes = v === '' ? 0 : Math.max(0, Number(v));
+				renderAll();
+			});
+			elToggleCircles.addEventListener('change', () => {
+				state.showCircles = elToggleCircles.checked;
+				renderAll();
+			});
+			elQ.addEventListener('input', () => {
+				state.q = elQ.value.trim().toLowerCase();
+				renderAll();
+			});
+
+			btnFit.addEventListener('click', () => fitToFiltered());
+			btnReset.addEventListener('click', () => resetFilters());
+			btnCopy.addEventListener('click', () => copyNames());
+			btnDownload.addEventListener('click', () => downloadFilteredJson());
+		}
+
+		function initMap() {
+			map = L.map('map', { preferCanvas: true });
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+			markerLayer = L.layerGroup().addTo(map);
+			circleLayer = L.layerGroup().addTo(map);
+
+			const allLatLng = stations
+				.filter(s => s.coord && isFinite(s.coord.lat) && isFinite(s.coord.lon))
+				.map(s => [s.coord.lat, s.coord.lon]);
+
+			if (allLatLng.length) map.fitBounds(allLatLng, { padding: [20, 20] });
+			else map.setView([35.68, 139.76], 12);
+		}
+
+		function resetFilters() {
+			state.selectedTargets = new Set(targets.map(t => t.node));
+			state.selectedBands = new Set(bands);
+			state.maxMinutes = null;
+			state.walkMinutes = 10;
+			state.showCircles = true;
+			state.q = '';
+
+			for (const t of targets) document.getElementById(`t_${t.node}`).checked = true;
+			for (const b of bands) document.getElementById(`b_${b}`).checked = true;
+			elMaxMinutes.value = '';
+			elWalkMinutes.value = '10';
+			elToggleCircles.checked = true;
+			elQ.value = '';
+
+			renderAll();
+			fitToFiltered();
+		}
+
+		function computeFiltered() {
+			const q = state.q;
+			const hasQ = q.length > 0;
+
+			const filtered = [];
+			for (const s of stations) {
+				if (hasQ) {
+					const hay = [s.stationName, s.roughAddress, s.pref, s.cityWard, ...(s.lines || [])].join(' ').toLowerCase();
+					if (!hay.includes(q)) continue;
+				}
+
+				const matches = (s.reachable || []).filter(r => {
+					if (!state.selectedTargets.has(r.targetNode)) return false;
+					if (!state.selectedBands.has(r.timeBand)) return false;
+					if (state.maxMinutes != null && Number.isFinite(state.maxMinutes) && r.timeMinutes > state.maxMinutes) return false;
+					return true;
+				});
+				if (matches.length === 0) continue;
+
+				let best = matches[0];
+				for (const m of matches) if (m.timeMinutes < best.timeMinutes) best = m;
+
+				const targetsUsed = Array.from(new Set(matches.map(m => m.target)));
+				const color = (s.lineMeta && best.line && s.lineMeta[best.line]?.color) ? s.lineMeta[best.line].color : '#7aa2ff';
+
+				filtered.push({ ...s, matches, best, targetsUsed, color });
+			}
+
+			filtered.sort((a, b) => (a.best.timeMinutes - b.best.timeMinutes) || a.stationName.localeCompare(b.stationName, 'ja'));
+			return filtered;
+		}
+
+		function renderTable(items) {
+			elTbody.innerHTML = '';
+			for (const s of items) {
+				const tr = document.createElement('tr');
+				const area = `${s.pref || ''}${s.cityWard ? ' ' + s.cityWard : ''}`;
+
+				const targetsChips = s.targetsUsed.map(t => `<span class="chip">${escapeHtml(t)}</span>`).join('');
+				const linesChips = (s.lines || []).map(line => {
+					const c = s.lineMeta?.[line]?.color || '#9fb0cf';
+					return `<span class="chip"><span class="dot" style="background:${escapeHtml(c)}"></span>${escapeHtml(line)}</span>`;
+				}).join('');
+
+				tr.innerHTML = `
+      <td><div style="font-weight:900;font-size:13px;">${escapeHtml(s.stationName)}</div>
+          <div class="small">${escapeHtml(s.roughAddress || '')}</div></td>
+      <td>${escapeHtml(area)}</td>
+      <td class="nowrap" style="font-weight:900;">${escapeHtml(String(s.best.timeMinutes))}</td>
+      <td><div class="chips">${targetsChips}</div></td>
+      <td><div class="chips">${linesChips}</div></td>
+    `;
+				tr.addEventListener('click', () => focusStation(s.stationId));
+				elTbody.appendChild(tr);
+			}
+		}
+
+		function renderMap(items) {
+			markerLayer.clearLayers();
+			circleLayer.clearLayers();
+			stationIdToMarker.clear();
+
+			const showCircles = state.showCircles && state.walkMinutes > 0;
+			const radiusMeters = state.walkMinutes * WALK_METERS_PER_MIN;
+
+			for (const s of items) {
+				if (!s.coord || !isFinite(s.coord.lat) || !isFinite(s.coord.lon)) continue;
+				const latlng = [s.coord.lat, s.coord.lon];
+
+				const marker = L.circleMarker(latlng, {
+					radius: 7, weight: 2, color: s.color, fillColor: s.color, fillOpacity: 0.85
+				});
+
+				const detailLines = (s.matches || [])
+					.slice().sort((a, b) => a.timeMinutes - b.timeMinutes)
+					.map(m => `・${escapeHtml(m.target)} → ${escapeHtml(String(m.timeMinutes))}分（${escapeHtml(m.timeBand)} / ${escapeHtml(m.line)}）`)
+					.join('<br/>');
+
+				const gmap = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.coord.lat + ',' + s.coord.lon)}`;
+
+				marker.bindPopup(`
+      <div>
+        <div style="font-weight:900;font-size:14px;margin-bottom:4px;">${escapeHtml(s.stationName)}</div>
+        <div style="color:#9fb0cf;font-size:12px;margin-bottom:6px;">${escapeHtml(s.roughAddress || '')}</div>
+        <div style="font-size:12px;line-height:1.45;">
+          <div style="margin-bottom:6px;"><b>到達条件内</b><br/>${detailLines || 'なし'}</div>
+          <div style="margin-bottom:6px;"><b>最短</b>：${escapeHtml(s.best.target)} → ${escapeHtml(String(s.best.timeMinutes))}分（${escapeHtml(s.best.line)}）</div>
+          <a href="${escapeHtml(gmap)}" target="_blank" rel="noreferrer">Google Mapsで開く</a>
+        </div>
+      </div>
+    `);
+
+				marker.addTo(markerLayer);
+				stationIdToMarker.set(s.stationId, marker);
+
+				if (showCircles) {
+					L.circle(latlng, {
+						radius: radiusMeters, weight: 1, color: s.color, fillColor: s.color, fillOpacity: 0.10
+					}).addTo(circleLayer);
+				}
+			}
+		}
+
+		function renderAll() {
+			const filtered = computeFiltered();
+			lastRendered = filtered;
+			elStatCount.textContent = String(filtered.length);
+			elStatTargets.textContent = String(state.selectedTargets.size);
+			renderTable(filtered);
+			renderMap(filtered);
+		}
+
+		function focusStation(stationId) {
+			const marker = stationIdToMarker.get(stationId);
+			const s = lastRendered.find(x => x.stationId === stationId);
+			if (!marker || !s?.coord) return;
+			map.setView([s.coord.lat, s.coord.lon], Math.max(map.getZoom(), 13), { animate: true });
+			marker.openPopup();
+		}
+
+		function fitToFiltered() {
+			const latlngs = (lastRendered || [])
+				.filter(s => s.coord && isFinite(s.coord.lat) && isFinite(s.coord.lon))
+				.map(s => [s.coord.lat, s.coord.lon]);
+			if (latlngs.length) map.fitBounds(latlngs, { padding: [30, 30] });
+		}
+
+		async function copyNames() {
+			const names = (lastRendered || []).map(s => s.stationName).join('\n');
+			try { await navigator.clipboard.writeText(names); toast(`コピーしました（${(lastRendered || []).length}件）`); }
+			catch { alert('クリップボードにコピーできませんでした（ブラウザ権限の都合）。'); }
+		}
+
+		function downloadFilteredJson() {
+			const out = {
+				generatedAt: new Date().toISOString(),
+				source: DATA.source,
+				filters: {
+					targets: Array.from(state.selectedTargets),
+					bands: Array.from(state.selectedBands),
+					maxMinutes: state.maxMinutes,
+					walkMinutes: state.walkMinutes,
+					q: state.q
+				},
+				stations: (lastRendered || []).map(s => ({
+					stationId: s.stationId, stationName: s.stationName, roughAddress: s.roughAddress,
+					pref: s.pref, cityWard: s.cityWard, coord: s.coord, lines: s.lines,
+					best: s.best, matches: s.matches
+				}))
+			};
+			const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url; a.download = 'filtered_reachable_stations.json';
+			document.body.appendChild(a); a.click(); a.remove();
+			URL.revokeObjectURL(url);
+		}
+
+		window.addEventListener('DOMContentLoaded', () => {
+			// RAW_DATA が貼られていない場合はここで止める
+			if (typeof RAW_DATA !== 'object') {
+				alert('RAW_DATA にあなたのJSONを貼ってください。const RAW_DATA = ... のところです。');
+				return;
+			}
+			initUI();
+			// Leaflet が読み込まれるまで少し待つ（deferのため）
+			const t = setInterval(() => {
+				if (window.L) {
+					clearInterval(t);
+					initMap();
+					renderAll();
+					fitToFiltered();
+				}
+			}, 30);
+		});
+	</script>
+</body>
+
+</html>

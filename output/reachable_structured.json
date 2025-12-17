@@ -1,0 +1,1238 @@
+{
+  "generatedAt": "2025-12-17T08:22:38.036Z",
+  "source": {
+    "transitLimit": 0,
+    "firstTrain": true,
+    "expressTrain": false,
+    "targets": [
+      {
+        "name": "茅場町",
+        "node": "00001303",
+        "baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00001303"
+      },
+      {
+        "name": "八丁堀",
+        "node": "00007548",
+        "baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00007548"
+      },
+      {
+        "name": "水天宮前",
+        "node": "00004569",
+        "baseUrl": "https://realestate.navitime.co.jp/chintai/reachable?node=00004569"
+      }
+    ],
+    "ranges": [
+      {
+        "lower": 0,
+        "higher": 10
+      },
+      {
+        "lower": 10,
+        "higher": 20
+      },
+      {
+        "lower": 20,
+        "higher": 30
+      },
+      {
+        "lower": 30,
+        "higher": 40
+      }
+    ]
+  },
+  "stationsById": {
+    "00007548": {
+      "stationId": "00007548",
+      "stationName": "八丁堀（東京都）",
+      "roughAddress": "東京都中央区八丁堀",
+      "pref": "東京都",
+      "cityWard": "中央区",
+      "coord": {
+        "lat": 35.675463,
+        "lon": 139.777349
+      },
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "0-10",
+          "timeMinutes": 4,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "10-20",
+          "timeMinutes": 12,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        }
+      ]
+    },
+    "00006866": {
+      "stationId": "00006866",
+      "stationName": "東陽町",
+      "roughAddress": "東京都江東区東陽",
+      "pref": "東京都",
+      "cityWard": "江東区",
+      "coord": {
+        "lat": 35.669631,
+        "lon": 139.817706
+      },
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "lineMeta": {
+        "東京メトロ東西線": {
+          "id": "00000771",
+          "color": "#009BBF"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "0-10",
+          "timeMinutes": 9,
+          "transitCount": 0,
+          "line": "東京メトロ東西線"
+        }
+      ]
+    },
+    "00000616": {
+      "stationId": "00000616",
+      "stationName": "浦安（千葉県）",
+      "roughAddress": "千葉県浦安市北栄",
+      "pref": "千葉県",
+      "cityWard": "浦安市",
+      "coord": {
+        "lat": 35.665911,
+        "lon": 139.893006
+      },
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "lineMeta": {
+        "東京メトロ東西線": {
+          "id": "00000771",
+          "color": "#009BBF"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "10-20",
+          "timeMinutes": 19,
+          "transitCount": 0,
+          "line": "東京メトロ東西線"
+        }
+      ]
+    },
+    "00001116": {
+      "stationId": "00001116",
+      "stationName": "霞ヶ関（東京都）",
+      "roughAddress": "東京都千代田区霞が関",
+      "pref": "東京都",
+      "cityWard": "千代田区",
+      "coord": {
+        "lat": 35.673932,
+        "lon": 139.75105
+      },
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "10-20",
+          "timeMinutes": 13,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "10-20",
+          "timeMinutes": 11,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 21,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        }
+      ]
+    },
+    "00009268": {
+      "stationId": "00009268",
+      "stationName": "南千住〔日比谷線〕",
+      "roughAddress": "東京都荒川区南千住",
+      "pref": "東京都",
+      "cityWard": "荒川区",
+      "coord": {
+        "lat": 35.732422,
+        "lon": 139.79881
+      },
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "10-20",
+          "timeMinutes": 17,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "10-20",
+          "timeMinutes": 19,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 21,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        }
+      ]
+    },
+    "00008355": {
+      "stationId": "00008355",
+      "stationName": "北千住",
+      "roughAddress": "東京都足立区千住旭町",
+      "pref": "東京都",
+      "cityWard": "足立区",
+      "coord": {
+        "lat": 35.749639,
+        "lon": 139.805177
+      },
+      "lines": [
+        "東京メトロ日比谷線",
+        "東武伊勢崎線〔スカイツリーライン〕"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        },
+        "東武伊勢崎線〔スカイツリーライン〕": {
+          "id": "00000798",
+          "color": "#0F6CC3"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "10-20",
+          "timeMinutes": 20,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "20-30",
+          "timeMinutes": 22,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 23,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        }
+      ]
+    },
+    "00006137": {
+      "stationId": "00006137",
+      "stationName": "中野（東京都）",
+      "roughAddress": "東京都中野区中野",
+      "pref": "東京都",
+      "cityWard": "中野区",
+      "coord": {
+        "lat": 35.705816,
+        "lon": 139.66594
+      },
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "lineMeta": {
+        "東京メトロ東西線": {
+          "id": "00000771",
+          "color": "#009BBF"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "20-30",
+          "timeMinutes": 25,
+          "transitCount": 0,
+          "line": "東京メトロ東西線"
+        }
+      ]
+    },
+    "00008561": {
+      "stationId": "00008561",
+      "stationName": "妙典",
+      "roughAddress": "千葉県市川市富浜",
+      "pref": "千葉県",
+      "cityWard": "市川市",
+      "coord": {
+        "lat": 35.690894,
+        "lon": 139.924193
+      },
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "lineMeta": {
+        "東京メトロ東西線": {
+          "id": "00000771",
+          "color": "#009BBF"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "20-30",
+          "timeMinutes": 26,
+          "transitCount": 0,
+          "line": "東京メトロ東西線"
+        }
+      ]
+    },
+    "00004837": {
+      "stationId": "00004837",
+      "stationName": "西船橋",
+      "roughAddress": "千葉県船橋市西船",
+      "pref": "千葉県",
+      "cityWard": "船橋市",
+      "coord": {
+        "lat": 35.707459,
+        "lon": 139.959232
+      },
+      "lines": [
+        "東京メトロ東西線",
+        "ＪＲ武蔵野線（西船橋-市川塩浜）"
+      ],
+      "lineMeta": {
+        "東京メトロ東西線": {
+          "id": "00000771",
+          "color": "#009BBF"
+        },
+        "ＪＲ武蔵野線（西船橋-市川塩浜）": {
+          "id": "00000201",
+          "color": "#F15A22"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "20-30",
+          "timeMinutes": 27,
+          "transitCount": 0,
+          "line": "東京メトロ東西線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "30-40",
+          "timeMinutes": 33,
+          "transitCount": 0,
+          "line": "ＪＲ武蔵野線（西船橋-市川塩浜）"
+        }
+      ]
+    },
+    "00002403": {
+      "stationId": "00002403",
+      "stationName": "広尾",
+      "roughAddress": "東京都港区南麻布",
+      "pref": "東京都",
+      "cityWard": "港区",
+      "coord": {
+        "lat": 35.651921,
+        "lon": 139.722208
+      },
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "20-30",
+          "timeMinutes": 22,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "10-20",
+          "timeMinutes": 20,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 30,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        }
+      ]
+    },
+    "00006133": {
+      "stationId": "00006133",
+      "stationName": "中目黒",
+      "roughAddress": "東京都目黒区上目黒",
+      "pref": "東京都",
+      "cityWard": "目黒区",
+      "coord": {
+        "lat": 35.644211,
+        "lon": 139.698927
+      },
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "lineMeta": {
+        "東京メトロ日比谷線": {
+          "id": "00000773",
+          "color": "#B5B5AC"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "20-30",
+          "timeMinutes": 27,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "20-30",
+          "timeMinutes": 25,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 35,
+          "transitCount": 0,
+          "line": "東京メトロ日比谷線"
+        }
+      ]
+    },
+    "00003040": {
+      "stationId": "00003040",
+      "stationName": "三鷹",
+      "roughAddress": "東京都三鷹市下連雀",
+      "pref": "東京都",
+      "cityWard": "三鷹市",
+      "coord": {
+        "lat": 35.702705,
+        "lon": 139.560919
+      },
+      "lines": [
+        "ＪＲ中央本線（東京-塩尻）"
+      ],
+      "lineMeta": {
+        "ＪＲ中央本線（東京-塩尻）": {
+          "id": "00000176",
+          "color": "#F15A22"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "30-40",
+          "timeMinutes": 39,
+          "transitCount": 0,
+          "line": "ＪＲ中央本線（東京-塩尻）"
+        }
+      ]
+    },
+    "00005968": {
+      "stationId": "00005968",
+      "stationName": "竹ノ塚",
+      "roughAddress": "東京都足立区竹の塚",
+      "pref": "東京都",
+      "cityWard": "足立区",
+      "coord": {
+        "lat": 35.794433,
+        "lon": 139.790816
+      },
+      "lines": [
+        "東武伊勢崎線〔スカイツリーライン〕"
+      ],
+      "lineMeta": {
+        "東武伊勢崎線〔スカイツリーライン〕": {
+          "id": "00000798",
+          "color": "#0F6CC3"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "30-40",
+          "timeMinutes": 31,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "30-40",
+          "timeMinutes": 33,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 35,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        }
+      ]
+    },
+    "00005403": {
+      "stationId": "00005403",
+      "stationName": "草加",
+      "roughAddress": "埼玉県草加市氷川町",
+      "pref": "埼玉県",
+      "cityWard": "草加市",
+      "coord": {
+        "lat": 35.828485,
+        "lon": 139.80348
+      },
+      "lines": [
+        "東武伊勢崎線〔スカイツリーライン〕"
+      ],
+      "lineMeta": {
+        "東武伊勢崎線〔スカイツリーライン〕": {
+          "id": "00000798",
+          "color": "#0F6CC3"
+        }
+      },
+      "reachable": [
+        {
+          "target": "茅場町",
+          "targetNode": "00001303",
+          "timeBand": "30-40",
+          "timeMinutes": 37,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        },
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "30-40",
+          "timeMinutes": 39,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        },
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 34,
+          "transitCount": 0,
+          "line": "東武伊勢崎線〔スカイツリーライン〕"
+        }
+      ]
+    },
+    "00006668": {
+      "stationId": "00006668",
+      "stationName": "東京",
+      "roughAddress": "東京都千代田区丸の内",
+      "pref": "東京都",
+      "cityWard": "千代田区",
+      "coord": {
+        "lat": 35.677656,
+        "lon": 139.764838
+      },
+      "lines": [
+        "ＪＲ京葉線"
+      ],
+      "lineMeta": {
+        "ＪＲ京葉線": {
+          "id": "00000132",
+          "color": "#C9242F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "0-10",
+          "timeMinutes": 7,
+          "transitCount": 0,
+          "line": "ＪＲ京葉線"
+        }
+      ]
+    },
+    "00004252": {
+      "stationId": "00004252",
+      "stationName": "新習志野",
+      "roughAddress": "千葉県習志野市茜浜",
+      "pref": "千葉県",
+      "cityWard": "習志野市",
+      "coord": {
+        "lat": 35.667171,
+        "lon": 140.013106
+      },
+      "lines": [
+        "ＪＲ京葉線"
+      ],
+      "lineMeta": {
+        "ＪＲ京葉線": {
+          "id": "00000132",
+          "color": "#C9242F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "30-40",
+          "timeMinutes": 37,
+          "transitCount": 0,
+          "line": "ＪＲ京葉線"
+        }
+      ]
+    },
+    "00001168": {
+      "stationId": "00001168",
+      "stationName": "海浜幕張",
+      "roughAddress": "千葉県千葉市美浜区ひび野",
+      "pref": "千葉県",
+      "cityWard": "千葉市",
+      "coord": {
+        "lat": 35.648556,
+        "lon": 140.041662
+      },
+      "lines": [
+        "ＪＲ京葉線"
+      ],
+      "lineMeta": {
+        "ＪＲ京葉線": {
+          "id": "00000132",
+          "color": "#C9242F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "八丁堀",
+          "targetNode": "00007548",
+          "timeBand": "30-40",
+          "timeMinutes": 39,
+          "transitCount": 0,
+          "line": "ＪＲ京葉線"
+        }
+      ]
+    },
+    "00009219": {
+      "stationId": "00009219",
+      "stationName": "清澄白河",
+      "roughAddress": "東京都江東区白河",
+      "pref": "東京都",
+      "cityWard": "江東区",
+      "coord": {
+        "lat": 35.682132,
+        "lon": 139.799977
+      },
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "lineMeta": {
+        "東京メトロ半蔵門線": {
+          "id": "00000774",
+          "color": "#8F76D6"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "0-10",
+          "timeMinutes": 6,
+          "transitCount": 0,
+          "line": "東京メトロ半蔵門線"
+        }
+      ]
+    },
+    "00003508": {
+      "stationId": "00003508",
+      "stationName": "住吉（東京都）",
+      "roughAddress": "東京都江東区住吉",
+      "pref": "東京都",
+      "cityWard": "江東区",
+      "coord": {
+        "lat": 35.689001,
+        "lon": 139.815729
+      },
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "lineMeta": {
+        "東京メトロ半蔵門線": {
+          "id": "00000774",
+          "color": "#8F76D6"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "0-10",
+          "timeMinutes": 9,
+          "transitCount": 0,
+          "line": "東京メトロ半蔵門線"
+        }
+      ]
+    },
+    "00000813": {
+      "stationId": "00000813",
+      "stationName": "押上[スカイツリー前]",
+      "roughAddress": "東京都墨田区押上",
+      "pref": "東京都",
+      "cityWard": "墨田区",
+      "coord": {
+        "lat": 35.710286,
+        "lon": 139.813287
+      },
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "lineMeta": {
+        "東京メトロ半蔵門線": {
+          "id": "00000774",
+          "color": "#8F76D6"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "10-20",
+          "timeMinutes": 13,
+          "transitCount": 0,
+          "line": "東京メトロ半蔵門線"
+        }
+      ]
+    },
+    "00007594": {
+      "stationId": "00007594",
+      "stationName": "半蔵門",
+      "roughAddress": "東京都千代田区麹町",
+      "pref": "東京都",
+      "cityWard": "千代田区",
+      "coord": {
+        "lat": 35.685676,
+        "lon": 139.741651
+      },
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "lineMeta": {
+        "東京メトロ半蔵門線": {
+          "id": "00000774",
+          "color": "#8F76D6"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "10-20",
+          "timeMinutes": 14,
+          "transitCount": 0,
+          "line": "東京メトロ半蔵門線"
+        }
+      ]
+    },
+    "00005271": {
+      "stationId": "00005271",
+      "stationName": "浅草橋",
+      "roughAddress": "東京都台東区浅草橋",
+      "pref": "東京都",
+      "cityWard": "台東区",
+      "coord": {
+        "lat": 35.697656,
+        "lon": 139.78643
+      },
+      "lines": [
+        "都営浅草線"
+      ],
+      "lineMeta": {
+        "都営浅草線": {
+          "id": "00000795",
+          "color": "#E83E2F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "10-20",
+          "timeMinutes": 13,
+          "transitCount": 0,
+          "line": "都営浅草線"
+        }
+      ]
+    },
+    "00005252": {
+      "stationId": "00005252",
+      "stationName": "泉岳寺",
+      "roughAddress": "東京都港区高輪",
+      "pref": "東京都",
+      "cityWard": "港区",
+      "coord": {
+        "lat": 35.638664,
+        "lon": 139.739946
+      },
+      "lines": [
+        "都営浅草線"
+      ],
+      "lineMeta": {
+        "都営浅草線": {
+          "id": "00000795",
+          "color": "#E83E2F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 23,
+          "transitCount": 0,
+          "line": "都営浅草線"
+        }
+      ]
+    },
+    "00004980": {
+      "stationId": "00004980",
+      "stationName": "青砥",
+      "roughAddress": "東京都葛飾区青戸",
+      "pref": "東京都",
+      "cityWard": "葛飾区",
+      "coord": {
+        "lat": 35.745571,
+        "lon": 139.856081
+      },
+      "lines": [
+        "京成押上線"
+      ],
+      "lineMeta": {
+        "京成押上線": {
+          "id": "00000286",
+          "color": "#005AAA"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 26,
+          "transitCount": 0,
+          "line": "京成押上線"
+        }
+      ]
+    },
+    "00007825": {
+      "stationId": "00007825",
+      "stationName": "品川",
+      "roughAddress": "東京都港区高輪",
+      "pref": "東京都",
+      "cityWard": "港区",
+      "coord": {
+        "lat": 35.628075,
+        "lon": 139.737987
+      },
+      "lines": [
+        "京急本線"
+      ],
+      "lineMeta": {
+        "京急本線": {
+          "id": "00000298",
+          "color": "#E5171F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 25,
+          "transitCount": 0,
+          "line": "京急本線"
+        }
+      ]
+    },
+    "00001736": {
+      "stationId": "00001736",
+      "stationName": "京成高砂",
+      "roughAddress": "東京都葛飾区高砂",
+      "pref": "東京都",
+      "cityWard": "葛飾区",
+      "coord": {
+        "lat": 35.75096,
+        "lon": 139.867356
+      },
+      "lines": [
+        "京成本線"
+      ],
+      "lineMeta": {
+        "京成本線": {
+          "id": "00000291",
+          "color": "#005AAA"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "20-30",
+          "timeMinutes": 29,
+          "transitCount": 0,
+          "line": "京成本線"
+        }
+      ]
+    },
+    "00004908": {
+      "stationId": "00004908",
+      "stationName": "西馬込",
+      "roughAddress": "東京都大田区南馬込",
+      "pref": "東京都",
+      "cityWard": "大田区",
+      "coord": {
+        "lat": 35.586971,
+        "lon": 139.706024
+      },
+      "lines": [
+        "都営浅草線"
+      ],
+      "lineMeta": {
+        "都営浅草線": {
+          "id": "00000795",
+          "color": "#E83E2F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 35,
+          "transitCount": 0,
+          "line": "都営浅草線"
+        }
+      ]
+    },
+    "00001715": {
+      "stationId": "00001715",
+      "stationName": "京急蒲田",
+      "roughAddress": "東京都大田区蒲田",
+      "pref": "東京都",
+      "cityWard": "大田区",
+      "coord": {
+        "lat": 35.560695,
+        "lon": 139.723737
+      },
+      "lines": [
+        "京急本線"
+      ],
+      "lineMeta": {
+        "京急本線": {
+          "id": "00000298",
+          "color": "#E5171F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 32,
+          "transitCount": 0,
+          "line": "京急本線"
+        }
+      ]
+    },
+    "00008112": {
+      "stationId": "00008112",
+      "stationName": "平和島",
+      "roughAddress": "東京都大田区大森北",
+      "pref": "東京都",
+      "cityWard": "大田区",
+      "coord": {
+        "lat": 35.578735,
+        "lon": 139.734975
+      },
+      "lines": [
+        "京急本線"
+      ],
+      "lineMeta": {
+        "京急本線": {
+          "id": "00000298",
+          "color": "#E5171F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 32,
+          "transitCount": 0,
+          "line": "京急本線"
+        }
+      ]
+    },
+    "00001718": {
+      "stationId": "00001718",
+      "stationName": "京急川崎",
+      "roughAddress": "神奈川県川崎市川崎区駅前本町",
+      "pref": "神奈川県",
+      "cityWard": "川崎市",
+      "coord": {
+        "lat": 35.5328,
+        "lon": 139.700787
+      },
+      "lines": [
+        "京急本線"
+      ],
+      "lineMeta": {
+        "京急本線": {
+          "id": "00000298",
+          "color": "#E5171F"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 36,
+          "transitCount": 0,
+          "line": "京急本線"
+        }
+      ]
+    },
+    "00007197": {
+      "stationId": "00007197",
+      "stationName": "二子玉川",
+      "roughAddress": "東京都世田谷区玉川",
+      "pref": "東京都",
+      "cityWard": "世田谷区",
+      "coord": {
+        "lat": 35.612205,
+        "lon": 139.627239
+      },
+      "lines": [
+        "東急田園都市線"
+      ],
+      "lineMeta": {
+        "東急田園都市線": {
+          "id": "00000789",
+          "color": "#018D54"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 34,
+          "transitCount": 0,
+          "line": "東急田園都市線"
+        }
+      ]
+    },
+    "00008775": {
+      "stationId": "00008775",
+      "stationName": "矢切",
+      "roughAddress": "千葉県松戸市下矢切",
+      "pref": "千葉県",
+      "cityWard": "松戸市",
+      "coord": {
+        "lat": 35.757293,
+        "lon": 139.899693
+      },
+      "lines": [
+        "京成成田スカイアクセス線・北総線"
+      ],
+      "lineMeta": {
+        "京成成田スカイアクセス線・北総線": {
+          "id": "00000852",
+          "color": "#00BDF2"
+        }
+      },
+      "reachable": [
+        {
+          "target": "水天宮前",
+          "targetNode": "00004569",
+          "timeBand": "30-40",
+          "timeMinutes": 37,
+          "transitCount": 0,
+          "line": "京成成田スカイアクセス線・北総線"
+        }
+      ]
+    }
+  },
+  "targetsIndex": {
+    "00001303": {
+      "target": "茅場町",
+      "targetNode": "00001303",
+      "timeBands": {
+        "0-10": [
+          "00007548",
+          "00006866"
+        ],
+        "10-20": [
+          "00000616",
+          "00001116",
+          "00009268",
+          "00008355"
+        ],
+        "20-30": [
+          "00006137",
+          "00008561",
+          "00004837",
+          "00008355",
+          "00002403",
+          "00006133"
+        ],
+        "30-40": [
+          "00003040",
+          "00005968",
+          "00005403"
+        ]
+      }
+    },
+    "00007548": {
+      "target": "八丁堀",
+      "targetNode": "00007548",
+      "timeBands": {
+        "0-10": [
+          "00006668"
+        ],
+        "10-20": [
+          "00001116",
+          "00009268",
+          "00002403"
+        ],
+        "20-30": [
+          "00002403",
+          "00008355",
+          "00006133"
+        ],
+        "30-40": [
+          "00005968",
+          "00005403",
+          "00004252",
+          "00001168",
+          "00004837"
+        ]
+      }
+    },
+    "00004569": {
+      "target": "水天宮前",
+      "targetNode": "00004569",
+      "timeBands": {
+        "0-10": [
+          "00009219",
+          "00003508"
+        ],
+        "10-20": [
+          "00007548",
+          "00000813",
+          "00007594",
+          "00005271"
+        ],
+        "20-30": [
+          "00001116",
+          "00009268",
+          "00002403",
+          "00005252",
+          "00004980",
+          "00008355",
+          "00007825",
+          "00001736"
+        ],
+        "30-40": [
+          "00002403",
+          "00006133",
+          "00004908",
+          "00005403",
+          "00005968",
+          "00001715",
+          "00008112",
+          "00001718",
+          "00007197",
+          "00008775"
+        ]
+      }
+    }
+  }
+}
