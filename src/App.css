@@ -1,83 +1,178 @@
 :root {
-  --bg: #0b0f17;
-  --panel: #121a27;
-  --panel2: #0f1622;
-  --text: #e7eefc;
-  --muted: #9fb0cf;
-  --line: rgba(255, 255, 255, 0.10);
-  --accent: #7aa2ff;
-  --radius: 14px;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-color: #f8fafc;
+  --panel-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --radius: 12px;
+  --header-height: 60px;
 }
 
-body {
+html,
+body,
+#root {
+  height: 100%;
   margin: 0;
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: sans-serif;
+  padding: 0;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  box-sizing: border-box;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Layout */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
 header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--line);
+  height: var(--header-height);
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+  z-index: 10;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
-.main-layout {
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  flex: 1;
-  overflow: hidden;
-  gap: 12px;
-  padding: 12px;
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
 }
 
-.sidebar {
-  background: var(--panel);
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-.content {
-  display: grid;
-  grid-template-rows: 1fr 300px;
-  gap: 12px;
-  overflow: hidden;
-}
-
-.map-wrapper,
-.table-wrapper {
-  background: var(--panel);
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-  overflow: hidden;
-}
-
-.loading-bar {
-  font-size: 0.8rem;
-  color: var(--accent);
-  animation: pulse 1.5s infinite;
+.loading-indicator {
+  font-size: 0.875rem;
+  color: var(--primary);
+  font-weight: 600;
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0% {
-    opacity: 0.5;
-  }
-
-  50% {
     opacity: 1;
   }
 
-  100% {
+  50% {
     opacity: 0.5;
   }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - var(--header-height));
+}
+
+/* Sidebar (Filter) */
+.sidebar {
+  width: 320px;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 5;
+  overflow-y: auto;
+}
+
+/* Content Area (Map + Table) */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-wrapper {
+  flex: 3;
+  /* マップを広めに */
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+
+.table-wrapper {
+  flex: 2;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+    overflow-y: auto;
+    /* 全体スクロール */
+    height: auto;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .app-container {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: none;
+    flex-shrink: 0;
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .map-wrapper {
+    height: 400px;
+    /* スマホでは固定高さ */
+    flex: none;
+  }
+
+  .table-wrapper {
+    height: auto;
+    /* コンテンツに合わせて伸びる、またはスクロール */
+    max-height: 500px;
+    flex: none;
+  }
+}
+
+/* Error Banner */
+.error-banner {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #fecaca;
 }

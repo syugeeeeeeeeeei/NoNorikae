@@ -22,15 +22,22 @@ const RANGES: TimeRange[] = [
 function App() {
   const [allStations, setAllStations] = useState<Record<string, Station>>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // フィルタ状態
   const [selectedTargets, setSelectedTargets] = useState<Set<string>>(new Set(TARGETS.map(t => t.node)));
   const [selectedBands, setSelectedBands] = useState<Set<string>>(new Set(RANGES.map(r => `${r.lower}-${r.higher}`)));
-  const [maxMinutes, setMaxMinutes] = useState<number | "">("");
+  // maxMinutes を削除
   const [searchQuery, setSearchQuery] = useState("");
   const [walkMinutes, setWalkMinutes] = useState(10);
+
+  // インタラクション状態（選択中の駅ID）
+  const [focusedStationId, setFocusedStationId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAll = async () => {
       setLoading(true);
+      setError(null);
       const newStations: Record<string, Station> = {};
 
       try {
@@ -57,6 +64,7 @@ function App() {
         setAllStations(newStations);
       } catch (e) {
         console.error("Fetch error:", e);
+        setError("データの取得に失敗しました。GitHub Pages等の静的環境ではAPIプロキシが動作しないため、データが表示されない場合があります。");
       } finally {
         setLoading(false);
       }
@@ -68,26 +76,28 @@ function App() {
     return Object.values(allStations).filter(s => {
       const matchesTarget = s.reachable.some(r => selectedTargets.has(r.targetNode));
       const matchesBand = s.reachable.some(r => selectedBands.has(r.timeBand));
-      const matchesMinutes = maxMinutes === "" || s.reachable.some(r => r.timeMinutes <= (maxMinutes as number));
+      // maxMinutes のフィルタを除去
       const matchesSearch = searchQuery === "" ||
         s.stationName.includes(searchQuery) ||
         s.roughAddress.includes(searchQuery) ||
         s.lines.some(l => l.includes(searchQuery));
 
-      return matchesTarget && matchesBand && matchesMinutes && matchesSearch;
+      return matchesTarget && matchesBand && matchesSearch;
     }).sort((a, b) => {
       const minA = Math.min(...a.reachable.map(r => r.timeMinutes));
       const minB = Math.min(...b.reachable.map(r => r.timeMinutes));
       return minA - minB;
     });
-  }, [allStations, selectedTargets, selectedBands, maxMinutes, searchQuery]);
+  }, [allStations, selectedTargets, selectedBands, searchQuery]);
 
   return (
     <div className="app-container">
       <header>
-        <h1>到達駅マップ（Vite + React 版）</h1>
-        {loading && <div className="loading-bar">データ取得中...</div>}
+        <h1>NoNorikae Map</h1>
+        {loading && <div className="loading-indicator">データ取得中...</div>}
       </header>
+
+      {error && <div className="error-banner">{error}</div>}
 
       <div className="main-layout">
         <aside className="sidebar">
@@ -98,8 +108,7 @@ function App() {
             setSelectedTargets={setSelectedTargets}
             selectedBands={selectedBands}
             setSelectedBands={setSelectedBands}
-            maxMinutes={maxMinutes}
-            setMaxMinutes={setMaxMinutes}
+            // maxMinutes プロパティを削除
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             walkMinutes={walkMinutes}
@@ -110,10 +119,19 @@ function App() {
 
         <main className="content">
           <div className="map-wrapper">
-            <MapView stations={filteredStations} walkMinutes={walkMinutes} />
+            <MapView
+              stations={filteredStations}
+              walkMinutes={walkMinutes}
+              focusedStationId={focusedStationId}
+              onStationSelect={setFocusedStationId}
+            />
           </div>
           <div className="table-wrapper">
-            <StationTable stations={filteredStations} />
+            <StationTable
+              stations={filteredStations}
+              focusedStationId={focusedStationId}
+              onStationSelect={setFocusedStationId}
+            />
           </div>
         </main>
       </div>

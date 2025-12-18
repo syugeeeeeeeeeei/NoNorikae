@@ -4,10 +4,10 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: './', // GitHub Pages等のサブディレクトリ展開に対応
   server: {
     proxy: {
-      // '/api-proxy' で始まるリクエストを NAVITIME の API サーバーに転送します
+      // ローカル開発用プロキシ（本番/静的ホスティングでは機能しません）
       '/api-proxy': {
         target: 'https://realestate.navitime.co.jp',
         changeOrigin: true,
